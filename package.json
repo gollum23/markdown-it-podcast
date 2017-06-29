@@ -1,0 +1,16 @@
+{
+  "name": "markdown-it-podcast",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "gollum23",
+  "description": "Markdown-it plugin to embed podcasts",
+  "keywords": [
+    "markdown-it",
+    "markdown-plugin"
+  ],
+  "devDependencies": {
+    "eslint": "^4.1.1",
+    "markdown-it": "^8.3.1"
+  }
+}
