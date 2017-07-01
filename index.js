@@ -5,6 +5,8 @@ const EMBED_REGEX = /@S\[([a-zA-Z].+)\]\([\s]*(.*?)[\s]*[\)]/im
 function podcast_embed(md, options) {
   function podcast_return(state, silent) {
     let token
+    let serviceEnd
+    let serviceStart
     let oldPos = state.pos
 
     if (state.src.charCodeAt(oldPos) !== 0x40/* @ */ ||
@@ -12,30 +14,44 @@ function podcast_embed(md, options) {
       return false;
     }
 
-    let match = EMBED_REGEX(state.src)
+    let match = EMBED_REGEX.exec(state.src)
 
     if (!match || match.length < 3) {
       return false;
     }
 
+    serviceStart = oldPos + 3;
+    serviceEnd = md.helpers.parseLinkLabel(state, oldPos + 1, false)
+
     if (!silent) {
-      token = state.push('podcast')
-      token.podcastUrl = match[0]
+      state.pos = serviceStart
+      state.posMax = serviceEnd
+      state.service = state.src.slice(serviceStart, serviceEnd)
+      let newState = new state.md.inline.State('soundcloud', state.md, state.env, [])
+      newState.md.inline.tokenize(newState)
+
+      token = state.push('podcast', '')
+      token.podcastUrl = match[2]
+      token.service = 'soundcloud'
+      token.level = state.level
     }
 
-    return token
+    state.pos = state.pos + state.src.indexOf(')', state.pos)
+    state.posMax = state.tokens.length;
+
+    return true
   }
 
-  return podcast_return()
+  return podcast_return
 }
 
 
 function tokenize_podcast(md, options) {
   function tolenize_podcast_return(token, idx) {
-    var podcastUrl = md.utils.escapeHtml(token[idx].podcastUrl)
+    let podcastUrl = md.utils.escapeHtml(token[idx].podcastUrl)
 
-    return podcastID === '' ? '' :
-      `<div><iframe width="100%" height="${options.height}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${options.url=podcastUrl}&amp;auto_play=${options.autoplay}&amp;hide_related=${options.hide_related}&amp;show_comments=${options.show_comments}&amp;show_user=${options.show_user}&amp;show_reposts=${options.show_reposts}&amp;visual=${options.visual}"></iframe></div>`
+    return podcastUrl === '' ? '' :
+      `<div><iframe width="100%" height="${options.height}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${options.url=podcastUrl}&amp;auto_play=${options.auto_play}&amp;hide_related=${options.hide_related}&amp;show_comments=${options.show_comments}&amp;show_user=${options.show_user}&amp;show_reposts=${options.show_reposts}&amp;visual=${options.visual}"></iframe></div>`
   }
 
   return tolenize_podcast_return
