@@ -4,17 +4,17 @@ const EMBED_REGEX = /@S\[([a-zA-Z].+)\]\([\s]*(.*?)[\s]*[\)]/im
 
 function podcast_embed(md, options) {
   function podcast_return(state, silent) {
-    let token
-    let serviceEnd
-    let serviceStart
-    let oldPos = state.pos
+    var token
+    var serviceEnd
+    var serviceStart
+    var oldPos = state.pos
 
     if (state.src.charCodeAt(oldPos) !== 0x40/* @ */ ||
       state.src.charCodeAt(oldPos + 1) !== 0x53/* S */) {
       return false;
     }
 
-    let match = EMBED_REGEX.exec(state.src)
+    var match = EMBED_REGEX.exec(state.src)
 
     if (!match || match.length < 3) {
       return false;
@@ -27,7 +27,7 @@ function podcast_embed(md, options) {
       state.pos = serviceStart
       state.posMax = serviceEnd
       state.service = state.src.slice(serviceStart, serviceEnd)
-      let newState = new state.md.inline.State('soundcloud', state.md, state.env, [])
+      var newState = new state.md.inline.State('soundcloud', state.md, state.env, [])
       newState.md.inline.tokenize(newState)
 
       token = state.push('podcast', '')
@@ -48,7 +48,7 @@ function podcast_embed(md, options) {
 
 function tokenize_podcast(md, options) {
   function tolenize_podcast_return(token, idx) {
-    let podcastUrl = md.utils.escapeHtml(token[idx].podcastUrl)
+    var podcastUrl = md.utils.escapeHtml(token[idx].podcastUrl)
 
     return podcastUrl === '' ? '' :
       `<div><iframe width="100%" height="${options.height}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${options.url=podcastUrl}&amp;auto_play=${options.auto_play}&amp;hide_related=${options.hide_related}&amp;show_comments=${options.show_comments}&amp;show_user=${options.show_user}&amp;show_reposts=${options.show_reposts}&amp;visual=${options.visual}"></iframe></div>`
@@ -69,12 +69,8 @@ var defaults = {
 };
 
 module.exports = function podcast_plugin(md, options) {
-  if (options) {
-    Object.keys(defaults).forEach((key) => {
-      if (typeof options[key] === 'undefined') {
-        options[key] = defaults[key]
-      }
-    })
+  if (typeof options === 'object') {
+    options = Object.assign({}, defaults, options)
   }
   else {
     options = defaults
