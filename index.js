@@ -49,9 +49,9 @@ function podcast_embed(md, options) {
 function tokenize_podcast(md, options) {
   function tolenize_podcast_return(token, idx) {
     var podcastUrl = md.utils.escapeHtml(token[idx].podcastUrl)
-
+    options.url = podcastUrl
     return podcastUrl === '' ? '' :
-      `<div><iframe width="100%" height="${options.height}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${options.url=podcastUrl}&amp;auto_play=${options.auto_play}&amp;hide_related=${options.hide_related}&amp;show_comments=${options.show_comments}&amp;show_user=${options.show_user}&amp;show_reposts=${options.show_reposts}&amp;visual=${options.visual}"></iframe></div>`
+      '<div><iframe width="100%" height="' + options.height + '" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=' + options.url + '&amp;auto_play=' + options.auto_play + '&amp;hide_related=' + options.hide_related + '&amp;show_comments=' + options.show_comments + '&amp;show_user=' + options.show_user + '&amp;show_reposts=' + options.show_reposts + '&amp;visual=' + options.visual + '"></iframe></div>'
   }
 
   return tolenize_podcast_return
